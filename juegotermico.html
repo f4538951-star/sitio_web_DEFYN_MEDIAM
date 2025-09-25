@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>🌊 ¡Enfría el Río Extremo! 🌊</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      background: #2193b0;
+      font-family: 'Comic Sans MS', sans-serif;
+    }
+    #info {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 5;
+      background: rgba(255,255,255,0.6);
+      padding: 10px 15px;
+      border-radius: 10px;
+      font-size: 1.2rem;
+      color: #004466;
+    }
+    #thermometer {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 40px;
+      height: 200px;
+      background: #ddd;
+      border: 3px solid #444;
+      border-radius: 20px;
+      overflow: hidden;
+      z-index: 5;
+    }
+    #thermoLevel {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      background: red;
+      height: 25%;
+      transition: height 0.3s, background 0.3s;
+    }
+    .screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      z-index: 10;
+    }
+    .btn {
+      padding: 15px 25px;
+      font-size: 1.1rem;
+      margin: 10px;
+      background: #ff9800;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px #d17d00;
+    }
+    .btn:hover { background: #ffc107; }
+    #centerMessage {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255,255,255,0.95);
+      color: #004466;
+      font-size: 2rem;
+      padding: 25px 40px;
+      border-radius: 25px;
+      text-align: center;
+      font-weight: bold;
+      box-shadow: 0 0 25px #00e5ff;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      z-index: 9;
+    }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+  <div id="info">
+    🌟 Puntaje: <span id="score">0</span> | 🏆 Nivel: <span id="level">1</span>
+  </div>
+  <div id="thermometer">
+    <div id="thermoLevel"></div>
+  </div>
+  <canvas id="gameCanvas"></canvas>
+  <div id="centerMessage"></div>
+  <div id="startScreen" class="screen">
+    <h1>🌊 ¡Enfría el Río Extremo! 🌊</h1>
+    <p>🐟 Instrucciones:</p>
+    <ul style="text-align:left;">
+      <li>Mueve el cubo de hielo con <b>el mouse</b> (arrastra el puntero).</li>
+      <li>Enfría las fuentes de calor 🔥 para salvar a los peces 🐟.</li>
+      <li>¡Cada nivel es más rápido y difícil!</li>
+    </ul>
+    <button class="btn" onclick="startGame()">Comenzar Juego</button>
+  </div>
+  <div id="gameOverScreen" class="screen" style="display:none;">
+    <h1>💀 ¡El río se calentó demasiado!</h1>
+    <p>Los peces no pudieron sobrevivir... ¡Inténtalo otra vez!</p>
+    <button class="btn" onclick="restartGame()">🔄 Reiniciar</button>
+    <button class="btn" onclick="goToTermica()">🏠 Volver al inicio</button>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const centerMessage = document.getElementById("centerMessage");
+    const thermoLevel = document.getElementById("thermoLevel");
+
+    let score = 0, temp = 25, level = 1;
+    let fish = [], heatSources = [], bubbles = [];
+    let iceCube = {x: canvas.width/2, y: canvas.height/2, width: 35, height: 35};
+    let iceCooldown = false, gameRunning = false, spawnInterval;
+
+    const tips = [
+      "🌱 Planta árboles cerca de ríos",
+      "🚫 Enfría el agua antes de verterla",
+      "🐟 Los peces necesitan agua fresca",
+      "💧 Mantén limpio y frío el río"
+    ];
+
+    function showCenterMessage(text) {
+      centerMessage.textContent = text;
+      centerMessage.style.opacity = 1;
+      setTimeout(() => centerMessage.style.opacity = 0, 2500);
+    }
+
+    function resetGame() {
+      score=0; temp=25; level=1;
+      fish=[]; heatSources=[]; bubbles=[];
+      iceCube={x: canvas.width/2, y: canvas.height/2, width: 35, height: 35};
+      iceCooldown=false;
+      for (let i=0;i<10;i++){
+        fish.push({
+          x: Math.random()*canvas.width,
+          y: Math.random()*canvas.height,
+          vx:(Math.random()*3+1)*(Math.random()<0.5?-1:1),
+          vy:(Math.random()*2+0.5)*(Math.random()<0.5?-1:1),
+          alive:true,
+          color:["#ff9933","#00e676","#29b6f6","#ab47bc"][Math.floor(Math.random()*4)]
+        });
+      }
+      updateThermometer();
+    }
+
+    function startGame(){
+      document.getElementById("startScreen").style.display="none";
+      document.getElementById("gameOverScreen").style.display="none";
+      resetGame();
+      gameRunning=true;
+      spawnInterval=setInterval(()=>{
+        if(Math.random()<0.8+level*0.15) spawnHeat(); 
+      },1300-(level-1)*100);
+      gameLoop();
+    }
+    function restartGame(){startGame();}
+    function goToTermica(){
+      window.location.href = "termica.html"; // redirige a tu página termica.html
+    }
+
+    function spawnHeat(){
+      heatSources.push({x:Math.random()*(canvas.width-60),y:Math.random()*(canvas.height-60),width:50,height:50,active:true});
+      temp+=2; updateThermometer();
+    }
+    function spawnBubble(){bubbles.push({x:Math.random()*canvas.width,y:canvas.height+10,r:Math.random()*5+2,vy:Math.random()*2+1});}
+
+    function drawFish(f){
+      ctx.fillStyle=f.alive?f.color:"gray";
+      ctx.beginPath();
+      ctx.ellipse(f.x,f.y,25,12,0,0,Math.PI*2);ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(f.x-20*(f.vx>0?1:-1),f.y);
+      ctx.lineTo(f.x-30*(f.vx>0?1:-1),f.y-10);
+      ctx.lineTo(f.x-30*(f.vx>0?1:-1),f.y+10);
+      ctx.closePath();ctx.fill();
+    }
+    function updateFish(){
+      fish.forEach(f=>{
+        if(f.alive){
+          f.x+=f.vx;f.y+=f.vy;
+          if(f.x<0||f.x>canvas.width)f.vx*=-1;
+          if(f.y<0||f.y>canvas.height)f.vy*=-1;
+          if(temp>=30&&Math.random()<0.03)f.alive=false;
+        }
+      });
+    }
+
+    function clampIce(){
+      if(iceCube.x<0)iceCube.x=0;
+      if(iceCube.y<0)iceCube.y=0;
+      if(iceCube.x+iceCube.width>canvas.width)iceCube.x=canvas.width-iceCube.width;
+      if(iceCube.y+iceCube.height>canvas.height)iceCube.y=canvas.height-iceCube.height;
+    }
+
+    canvas.addEventListener("mousemove",e=>{
+      iceCube.x=e.clientX-iceCube.width/2;
+      iceCube.y=e.clientY-iceCube.height/2;
+      clampIce();
+    });
+
+    function checkCollisions(){
+      if(!iceCooldown){
+        heatSources.forEach(h=>{
+          if(h.active&&iceCube.x<h.x+h.width&&iceCube.x+iceCube.width>h.x&&iceCube.y<h.y+h.height&&iceCube.y+iceCube.height>h.y){
+            h.active=false;score+=10;temp-=5;updateThermometer();
+            if(score%40===0){level++;showCenterMessage("🔥 Nivel "+level+" 🔥\n"+tips[(level-1)%tips.length]);}
+            iceCooldown=true;setTimeout(()=>iceCooldown=false,500);
+          }
+        });
+      }
+    }
+
+    function updateThermometer(){
+      const percent=Math.min(100,(temp/45)*100);
+      thermoLevel.style.height=percent+"%";
+      thermoLevel.style.background=temp<30?"#00e676":temp<40?"#ffeb3b":"#f44336";
+    }
+
+    function draw(){
+      const red=Math.min(255,(temp-25)*12);
+      ctx.fillStyle=`rgb(${red},150,200)`;ctx.fillRect(0,0,canvas.width,canvas.height);
+      bubbles.forEach(b=>{
+        ctx.fillStyle="rgba(255,255,255,0.5)";
+        ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.fill();b.y-=b.vy;
+      });
+      bubbles=bubbles.filter(b=>b.y>-10);
+      if(Math.random()<0.3)spawnBubble();
+      fish.forEach(drawFish);
+      heatSources.forEach(h=>{
+        if(h.active){ctx.fillStyle="orange";ctx.fillRect(h.x,h.y,h.width,h.height);
+        ctx.fillStyle="red";ctx.fillRect(h.x+10,h.y+10,h.width-20,h.height-20);}
+      });
+      ctx.fillStyle="rgba(200,255,255,0.8)";
+      ctx.strokeStyle="#ffffff";ctx.lineWidth=2;
+      ctx.fillRect(iceCube.x,iceCube.y,iceCube.width,iceCube.height);
+      ctx.strokeRect(iceCube.x,iceCube.y,iceCube.width,iceCube.height);
+      document.getElementById("score").textContent=score;
+      document.getElementById("level").textContent=level;
+    }
+
+    function endGame(){
+      clearInterval(spawnInterval);gameRunning=false;
+      document.getElementById("gameOverScreen").style.display="flex";
+    }
+
+    function gameLoop(){
+      if(!gameRunning)return;
+      updateFish();checkCollisions();draw();
+      if(temp>=40||fish.every(f=>!f.alive)){
+        endGame();
+      } else {
+        requestAnimationFrame(gameLoop);
+      }
+    }
+
+    window.addEventListener('resize',()=>{
+      canvas.width=window.innerWidth;
+      canvas.height=window.innerHeight;
+    });
+  </script>
+</body>
+</html>

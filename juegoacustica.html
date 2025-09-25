@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>🐦 Corre y Disfruta la Naturaleza</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(to top, #a5d6a7, #e8f5e9);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #juego {
+      display: block;
+      margin: 0 auto;
+      background: linear-gradient(to bottom, #c8e6c9, #f1f8e9);
+    }
+    .ui {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.2rem;
+      font-weight: bold;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 8px 18px;
+      border-radius: 12px;
+      color: #1b5e20;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      display: flex;
+      gap: 20px;
+    }
+    #fraseNivel {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background: #fff3cd;
+      border-radius: 8px;
+      font-size: 1rem;
+      color: #856404;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      text-align: center;
+      min-height: 40px;
+    }
+    #mensajeFinal {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      text-align: center;
+      max-width: 80%;
+      font-size: 1.2rem;
+      display: none;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background: #388e3c;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    button:hover {
+      background: #1b5e20;
+      transform: scale(1.05);
+    }
+    .volver {
+      display: block;
+      text-align: center;
+      margin-top: 2rem;
+    }
+    .volver a {
+      background-color: #1976d2;
+      color: white;
+      padding: 0.8rem 1.5rem;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+    .volver a:hover {
+      background-color: #0d47a1;
+    }
+  </style>
+</head>
+<body>
+  <div class="ui">
+    <span id="score">Puntos: 0</span>
+    <span id="nivel">Nivel: 1</span>
+    <span id="vidas">Vidas: ❤️❤️❤️</span>
+  </div>
+  <canvas id="juego"></canvas>
+  <div id="fraseNivel">ℹ Disfruta de la naturaleza sin ruido excesivo 🌿</div>
+  <div id="mensajeFinal">
+    <h2 id="titulo"></h2>
+    <p id="texto"></p>
+    <button onclick="reiniciar()">🔄 Reiniciar</button>
+    <div class="volver">
+      <a href="acustica.html">⬅ Volver</a>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("juego");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = 300;
+
+    const scoreText = document.getElementById("score");
+    const nivelText = document.getElementById("nivel");
+    const vidasText = document.getElementById("vidas");
+    const fraseNivel = document.getElementById("fraseNivel");
+    const mensajeFinal = document.getElementById("mensajeFinal");
+    const tituloMsg = document.getElementById("titulo");
+    const textoMsg = document.getElementById("texto");
+
+    let jugador = { x: 50, y: 200, w: 40, h: 60, dy: 0, saltos: 0 };
+    let objetos = [];
+    let score = 0;
+    let velocidad = 2.5; // más lento
+    let juegoActivo = true;
+    let nivel = 1;
+    let vidas = 3;
+    let tiempoUltimoObjeto = 0;
+
+    const frases = [
+      "🌱 Escuchar a las aves es mejor que el ruido de los autos.",
+      "😌 El silencio ayuda a reducir el estrés.",
+      "👂 La contaminación acústica daña nuestra salud auditiva.",
+      "🌍 Reducir el ruido mejora la vida en comunidad.",
+      "🚸 Evitemos bocinas innecesarias, todos ganamos."
+    ];
+
+    function dibujarJugador() {
+      ctx.font = "40px Segoe UI";
+      ctx.fillText("👦🎶", jugador.x, jugador.y + 40);
+      ctx.font = "24px Segoe UI";
+      ctx.fillText("🐦", jugador.x + 30, jugador.y + 10);
+    }
+
+    function generarObjeto() {
+      const tipo = Math.random() < 0.8 ? "obstaculo" : "estrella";
+      if (tipo === "obstaculo") {
+        const iconos = ["🚗", "🔊", "🏗️"];
+        let icono = iconos[Math.floor(Math.random() * iconos.length)];
+        objetos.push({
+          x: canvas.width,
+          y: 220,
+          w: 40,
+          h: 40,
+          icono: icono,
+          tipo: "obstaculo"
+        });
+      } else {
+        objetos.push({
+          x: canvas.width,
+          y: 180,
+          w: 30,
+          h: 30,
+          icono: "⭐",
+          tipo: "estrella"
+        });
+      }
+    }
+
+    function dibujarObjetos() {
+      objetos.forEach((obj, i) => {
+        ctx.font = obj.tipo === "estrella" ? "28px Segoe UI" : "30px Segoe UI";
+        ctx.fillText(obj.icono, obj.x, obj.y + 20);
+        obj.x -= velocidad;
+
+        if (
+          jugador.x < obj.x + obj.w &&
+          jugador.x + jugador.w > obj.x &&
+          jugador.y < obj.y + obj.h &&
+          jugador.y + jugador.h > obj.y
+        ) {
+          if (obj.tipo === "obstaculo") {
+            vidas--;
+            actualizarVidas();
+            if (vidas <= 0) finJuego();
+          } else if (obj.tipo === "estrella") {
+            score += 200;
+          }
+          objetos.splice(i, 1);
+        }
+
+        if (obj.x + obj.w < 0) objetos.splice(i, 1);
+      });
+    }
+
+    function actualizar() {
+      if (!juegoActivo) return;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // suelo
+      ctx.fillStyle = "#66bb6a";
+      ctx.fillRect(0, 280, canvas.width, 20);
+
+      // jugador
+      jugador.y += jugador.dy;
+      if (jugador.y + jugador.h < 280) {
+        jugador.dy += 0.6; // gravedad más suave
+      } else {
+        jugador.y = 220;
+        jugador.dy = 0;
+        jugador.saltos = 0;
+      }
+      dibujarJugador();
+
+      // generar objeto cada 3 seg
+      if (Date.now() - tiempoUltimoObjeto > 3000) {
+        generarObjeto();
+        tiempoUltimoObjeto = Date.now();
+      }
+
+      dibujarObjetos();
+
+      // score
+      score++;
+      scoreText.textContent = "Puntos: " + score;
+
+      // niveles
+      if (score % 1500 === 0) {
+        nivel++;
+        velocidad += 0.3;
+        nivelText.textContent = "Nivel: " + nivel;
+        fraseNivel.textContent = frases[(nivel - 1) % frases.length];
+      }
+
+      requestAnimationFrame(actualizar);
+    }
+
+    function actualizarVidas() {
+      vidasText.textContent = "Vidas: " + "❤️".repeat(vidas);
+    }
+
+    function finJuego() {
+      juegoActivo = false;
+      tituloMsg.textContent = "💀 Fin del Juego";
+      textoMsg.textContent = "Puntaje final: " + score +
+        "\nNivel alcanzado: " + nivel +
+        "\n🐦 Recuerda: El silencio y la naturaleza son salud.";
+      mensajeFinal.style.display = "block";
+    }
+
+    function reiniciar() {
+      jugador = { x: 50, y: 200, w: 40, h: 60, dy: 0, saltos: 0 };
+      objetos = [];
+      score = 0;
+      velocidad = 2.5;
+      nivel = 1;
+      vidas = 3;
+      actualizarVidas();
+      nivelText.textContent = "Nivel: 1";
+      fraseNivel.textContent = "ℹ Disfruta de la naturaleza sin ruido excesivo 🌿";
+      juegoActivo = true;
+      mensajeFinal.style.display = "none";
+      actualizar();
+    }
+
+    window.addEventListener("keydown", (e) => {
+      if (e.code === "Space" && jugador.saltos < 2) {
+        jugador.dy = -12; // salto más ligero
+        jugador.saltos++;
+      }
+    });
+
+    actualizar();
+  </script>
+</body>
+</html>

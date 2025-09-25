@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Juego: Atrapa el Aire Limpio</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background: linear-gradient(to bottom, #bbdefb, #e3f2fd);
+      color: #333;
+      text-align: center;
+    }
+
+    header {
+      background-color: #42a5f5;
+      color: white;
+      padding: 1.5rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+
+    .juegos {
+      margin: 2rem auto;
+      padding: 1.5rem;
+      background: #ffffffcc;
+      border-radius: 15px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+      text-align: center;
+      max-width: 600px;
+    }
+
+    canvas {
+      background: linear-gradient(to top, #c8e6c9, #ffffff);
+      border: 3px solid #388e3c;
+      border-radius: 12px;
+      display: block;
+      margin: 1rem auto;
+    }
+
+    button {
+      padding: 12px 24px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #66bb6a;
+      color: white;
+      margin: 0.5rem;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #388e3c;
+      transform: scale(1.05);
+    }
+
+    .info {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-top: 0.5rem;
+      color: #2e7d32;
+    }
+
+    #regresarBtn {
+      display: none; /* se muestra solo al perder */
+      background: #ef5350;
+    }
+
+    #regresarBtn:hover {
+      background: #c62828;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🌤️ Atrapa el Aire Limpio</h1>
+    <p>¡Atrapa las nubes felices y evita el humo gris!</p>
+  </header>
+
+  <section class="juegos">
+    <div class="info">
+      <span id="score">Puntaje: 0</span> | 
+      <span id="nivel">Nivel: 1</span> | 
+      <span id="vidas">Vidas: 3</span>
+    </div>
+    <canvas id="juego" width="400" height="400"></canvas>
+    <button id="juegoBtn">Iniciar Juego</button>
+    <button id="regresarBtn" onclick="window.location.href='aire.html'">Regresar</button>
+    <p>Usa las flechas ⬅️ ➡️ para mover al niño con la red 🧒</p>
+  </section>
+
+  <script>
+    const canvas = document.getElementById("juego");
+    const ctx = canvas.getContext("2d");
+    const juegoBtn = document.getElementById("juegoBtn");
+    const regresarBtn = document.getElementById("regresarBtn");
+    const scoreText = document.getElementById("score");
+    const nivelText = document.getElementById("nivel");
+    const vidasText = document.getElementById("vidas");
+
+    let jugador, objetos, juegoActivo, animacion, score, nivel, velocidad, vidas;
+    let mensaje = "";
+    let mensajeTimer = 0;
+
+    function resetJuego() {
+      jugador = { x: 180, y: 350, w: 50, h: 50 };
+      objetos = [];
+      juegoActivo = true;
+      score = 0;
+      nivel = 1;
+      velocidad = 2;
+      vidas = 3;
+      mensaje = "";
+      mensajeTimer = 0;
+      regresarBtn.style.display = "none"; // ocultar regresar al reiniciar
+      actualizarUI();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function actualizarUI() {
+      scoreText.textContent = "Puntaje: " + score;
+      nivelText.textContent = "Nivel: " + nivel;
+      vidasText.textContent = "Vidas: " + vidas;
+    }
+
+    function mostrarMensaje(txt, color="red") {
+      mensaje = { texto: txt, color: color };
+      mensajeTimer = 90;
+    }
+
+    function dibujarJugador() {
+      // Niño con una red sencillo
+      ctx.fillStyle = "#ffcc80";
+      ctx.beginPath();
+      ctx.arc(jugador.x + 25, jugador.y + 15, 15, 0, Math.PI * 2); // cabeza
+      ctx.fill();
+
+      ctx.fillStyle = "#1976d2";
+      ctx.fillRect(jugador.x + 10, jugador.y + 30, 30, 20); // cuerpo
+
+      ctx.fillStyle = "#5d4037";
+      ctx.fillRect(jugador.x + 35, jugador.y + 5, 20, 5); // palo de la red
+
+      ctx.strokeStyle = "#000";
+      ctx.beginPath();
+      ctx.arc(jugador.x + 55, jugador.y + 5, 15, 0, Math.PI * 2); // red
+      ctx.stroke();
+    }
+
+    function dibujarJuego() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Jugador
+      dibujarJugador();
+
+      // Crear objetos
+      if (Math.random() < 0.04) {
+        let bueno = Math.random() < 0.6;
+        objetos.push({ 
+          x: Math.random() * 360, 
+          y: 0, 
+          w: 30, 
+          h: 30, 
+          tipo: bueno ? "bueno" : "malo" 
+        });
+      }
+
+      // Dibujar objetos
+      objetos.forEach((obj, i) => {
+        obj.y += velocidad;
+
+        if (obj.tipo === "bueno") {
+          ctx.fillStyle = "#81c784";
+          ctx.beginPath();
+          ctx.arc(obj.x, obj.y, 15, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = "white";
+          ctx.fillText("😊", obj.x - 10, obj.y + 5);
+        } else {
+          ctx.fillStyle = "#9e9e9e";
+          ctx.beginPath();
+          ctx.arc(obj.x, obj.y, 15, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = "black";
+          ctx.fillText("😞", obj.x - 10, obj.y + 5);
+        }
+
+        // Colisión
+        if (
+          jugador.x < obj.x + obj.w &&
+          jugador.x + jugador.w > obj.x &&
+          jugador.y < obj.y + obj.h &&
+          jugador.y + jugador.h > obj.y
+        ) {
+          if (obj.tipo === "bueno") {
+            score++;
+            if (score % 10 === 0) {
+              nivel++;
+              velocidad += 0.5;
+              mostrarMensaje("🌟 ¡Nivel " + nivel + "!", "blue");
+            }
+          } else {
+            vidas--;
+            if (vidas > 0) {
+              mostrarMensaje("❌ Perdiste una vida", "red");
+            } else {
+              juegoActivo = false;
+              regresarBtn.style.display = "inline-block"; // mostrar regresar
+            }
+          }
+          objetos.splice(i, 1);
+          actualizarUI();
+        }
+
+        // Si se va sin atrapar
+        if (obj.y > 400) {
+          objetos.splice(i, 1);
+        }
+      });
+
+      // Mensaje temporal
+      if (mensajeTimer > 0 && juegoActivo) {
+        ctx.fillStyle = mensaje.color;
+        ctx.font = "20px Comic Sans MS";
+        ctx.fillText(mensaje.texto, 100, 200);
+        mensajeTimer--;
+      }
+
+      // Fin del juego
+      if (!juegoActivo) {
+        ctx.fillStyle = "red";
+        ctx.font = "22px Comic Sans MS";
+        ctx.fillText("💀 Fin del juego", 120, 200);
+        juegoBtn.textContent = "Reiniciar";
+        cancelAnimationFrame(animacion);
+        return;
+      }
+
+      animacion = requestAnimationFrame(dibujarJuego);
+    }
+
+    // Controles
+    document.addEventListener("keydown", (e) => {
+      if (!juegoActivo) return;
+      if (e.key === "ArrowLeft" && jugador.x > 0) jugador.x -= 20;
+      if (e.key === "ArrowRight" && jugador.x < 350) jugador.x += 20;
+    });
+
+    // Botón iniciar/reiniciar
+    juegoBtn.addEventListener("click", () => {
+      resetJuego();
+      juegoBtn.textContent = "Reiniciar";
+      dibujarJuego();
+    });
+
+    resetJuego();
+  </script>
+</body>
+</html>

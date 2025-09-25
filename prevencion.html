@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Prevención de la Contaminación</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: "Nunito", sans-serif;
+      background-color: #e8f5e9;
+      color: #2e7d32;
+    }
+    header {
+      background-color: #66bb6a;
+      padding: 2rem;
+      text-align: center;
+      color: white;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    nav {
+      background: linear-gradient(90deg, #43a047, #2e7d32);
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 10px 0;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+    nav a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      margin: 6px;
+      text-decoration: none;
+      background-color: rgba(255, 255, 255, 0.15);
+      color: white;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1.05rem;
+      transition: background-color 0.3s ease, transform 0.2s;
+      backdrop-filter: blur(6px);
+    }
+    nav a:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+      transform: scale(1.05);
+    }
+    main {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #388e3c;
+      margin-bottom: 1.5rem;
+      font-size: 2rem;
+      border-bottom: 3px solid #a5d6a7;
+      padding-bottom: 0.5rem;
+    }
+    .info-impacto {
+      background-color: #a5d6a7;
+      color: #1b5e20;
+      padding: 2rem;
+      border-left: 8px solid #388e3c;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      font-size: 1.15rem;
+      line-height: 1.6;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .info-impacto h3 {
+      font-size: 1.6rem;
+      margin-bottom: 1rem;
+      font-weight: 800;
+      color: #2e7d32;
+    }
+    .contenedor-cuadros {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      justify-content: center;
+      margin: 2rem 0;
+    }
+    .cuadro {
+      width: 200px;
+      text-align: center;
+      border-radius: 12px;
+      padding: 1rem;
+      background-color: #f1f8e9;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      text-decoration: none;
+      color: #2e7d32;
+    }
+    .cuadro img {
+      width: 60px;
+      height: 60px;
+      margin-bottom: 0.5rem;
+    }
+    .cuadro:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    }
+    .info-llamativa {
+      background: linear-gradient(135deg, #81c784, #388e3c);
+      color: white;
+      padding: 2rem;
+      border-radius: 12px;
+      text-align: center;
+      margin-top: 2rem;
+      box-shadow: 0 8px 20px rgba(56, 142, 60, 0.5);
+    }
+    .info-llamativa h3 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      font-weight: 900;
+    }
+    .info-llamativa p {
+      font-size: 1.15rem;
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+    }
+    .info-llamativa button {
+      background-color: #2e7d32;
+      border: none;
+      color: white;
+      font-weight: 700;
+      font-size: 1.1rem;
+      padding: 0.8rem 2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+    .info-llamativa button:hover {
+      background-color: #1b5e20;
+      transform: scale(1.05);
+    }
+    .lema-final {
+      background-color: #c8e6c9;
+      padding: 2rem;
+      margin: 2rem auto;
+      max-width: 800px;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 1.3rem;
+      font-style: italic;
+      color: #2e7d32;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.6);
+    }
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 2rem;
+      border-radius: 12px;
+      width: 80%;
+      max-width: 500px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      color: #2e7d32;
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 1.5rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .close:hover {
+      color: #000;
+    }
+footer {
+      background-color: #66bb6a;
+      color: white;
+      text-align: center;
+      padding: 1rem 0;
+      margin-top: 3rem;
+      animation: fadeIn 1s ease forwards;
+      animation-delay: 4s;
+    }
+  </style>
+</head>
+
+<body>
+  <header><h1>GREENMIND</h1></header>
+  <h2>🌱 Conciencia Ambiental</h2>
+
+  <nav>
+    <a href="quees.html"><i class="fas fa-leaf"></i> ¿QUÉ ES?</a>
+    <a href="tipos.html"><i class="fas fa-layer-group"></i> TIPOS</a>
+    <a href="actividades.html"><i class="fas fa-hands-helping"></i> ACTIVIDADES</a>
+    <a href="prevencion.html"><i class="fas fa-hand-holding-heart"></i> PREVENCIÓN</a>
+    <a href="imagenes.html"><i class="fas fa-camera"></i> IMÁGENES</a>
+    <a href="buzon.html"><i class="fas fa-envelope-open-text"></i> BUZÓN</a>
+    <a href="huachis.html"><i class="fas fa-cogs"></i> HUACHIS</a>
+  </nav>
+
+  <main>
+    <h2>Prevención de la Contaminación</h2>
+
+    <section class="info-impacto">
+      <h3>¿Sabías que...?</h3>
+      <p>
+                🌍 Cada minuto se compran más de <strong>1 millón de botellas de plástico</strong> en el mundo.  
+        <br />
+        🐢 Más de <strong>100,000 animales marinos</strong> mueren cada año por ingerir residuos plásticos.
+        <br />
+        🧠 La contaminación también afecta nuestra salud mental y física.
+      </p>
+    </section>
+
+    <h2>¿Cómo separar la basura?</h2>
+  <div class="contenedor-cuadros">
+  <a href="organico.html" class="cuadro">
+    <img src="https://cdn-icons-png.flaticon.com/128/706/706164.png" alt="Orgánico" />
+    <h4>Orgánico</h4>
+    <p>Restos de comida, cáscaras y residuos biodegradables. Va al tacho verde.</p>
+  </a>
+
+  <a href="inorganico.html" class="cuadro">
+    <img src="https://cdn-icons-png.flaticon.com/128/684/684908.png" alt="Inorgánico" />
+    <h4>Inorgánico</h4>
+    <p>Plásticos, metales, cartón limpio. Separa antes de desechar. Va al tacho amarillo.</p>
+  </a>
+
+  <a href="peligroso.html" class="cuadro">
+    <img src="https://cdn-icons-png.flaticon.com/128/990/990516.png" alt="Peligroso" />
+    <h4>Peligroso</h4>
+    <p>Pilas, baterías, químicos. Haz clic para conocer su impacto ambiental.</p>
+  </a>
+
+  <a href="sintacho.html" class="cuadro">
+    <img src="https://cdn-icons-png.flaticon.com/128/1828/1828843.png" alt="Sin tacho" />
+    <h4>¿Sin tacho?</h4>
+    <p>Haz clic para conocer qué hacer cuando no hay basurero cerca.</p>
+  </a>
+</div>
+
+<!-- Contenido dinámico -->
+<div id="contenido-dinamico" class="info-impacto" style="display: none;"></div>
+    </div>
+
+    <section class="info-llamativa">
+      <h3>¡Actúa ahora! 🌎</h3>
+      <p>
+        Cada año, más de <strong>8 millones de toneladas</strong> de basura terminan en nuestros océanos.  
+        <br />
+        <strong>Tu pequeño gesto puede evitar grandes daños.</strong> Reduce, reutiliza y recicla.
+      </p>
+      <button onclick="document.getElementById('modalAyuda').style.display='block'">Quiero ayudar</button>
+    </section>
+
+    <div class="lema-final">🌎 "Pequeñas acciones, grandes cambios para nuestro planeta."</div>
+  </main>
+
+  <div id="modalAyuda" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="document.getElementById('modalAyuda').style.display='none'">&times;</span>
+      <h2>¿Cómo puedes ayudar?</h2>
+      <p>🧴 Lleva siempre una bolsa reutilizable.</p>
+      <p>🚯 No tires basura en la calle o el mar.</p>
+      <p>♻️ Separa los residuos en casa y enséñale a otros.</p>
+      <p>🌿 Participa en campañas de limpieza.</p>
+    </div>
+  </div>
+
+  <script>
+    function abrirModal() {
+      alert("Este sería el modal de residuos peligrosos.");
+    }
+
+    function abrirModalSinTacho() {
+      alert("Este sería el modal de qué hacer sin basurero.");
+    }
+
+    window.onclick = function(event) {
+      const modal = document.getElementById('modalAyuda');
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+  </script>
+  <script>
+  function mostrarContenido(tipo) {
+    const contenedor = document.getElementById("contenido-dinamico");
+    contenedor.style.display = "block";
+
+    if (tipo === "peligroso") {
+      contenedor.innerHTML = `
+        <h3>Residuos Peligrosos</h3>
+        <p>Los residuos peligrosos como pilas, baterías y productos químicos deben ser tratados con cuidado.
+        Nunca los mezcles con basura común. Llévalos a puntos de recolección especializados para evitar daños al medio ambiente.</p>
+      `;
+    } else if (tipo === "sintacho") {
+      contenedor.innerHTML = `
+        <h3>¿Qué hacer si no hay basurero?</h3>
+        <p>Si estás en un lugar sin tacho, guarda tus residuos en una bolsa y llévalos contigo hasta encontrar uno.
+        No los dejes en la calle o en la naturaleza. Tu acción responsable ayuda a proteger el planeta.</p>
+      `;
+    }
+  }
+</script>
+
+  <footer class="footer">
+  <p>&copy; 2025 GREENMIND. Todos los derechos reservados.</p>
+</footer>
+
+</body>
+</html>
+

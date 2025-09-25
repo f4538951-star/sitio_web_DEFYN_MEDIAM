@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Atrapa las Estrellas 🌌</title>
+<style>
+  body {
+    margin: 0;
+    overflow: hidden;
+    font-family: 'Montserrat', sans-serif;
+    background: radial-gradient(circle at bottom, #0d1b2a, #000);
+    color: white;
+  }
+
+  header {
+    text-align: center;
+    padding: 1rem;
+    background: linear-gradient(90deg, #3949ab, #1e88e5);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    z-index: 2;
+    position: relative;
+  }
+  header h1 { margin: 0; font-size: 2rem; }
+  header p { margin: 0.3rem 0 0; font-size: 1rem; color: #e0f7fa; }
+
+  /* HUD */
+  #hud {
+    position: absolute;
+    top: 15px;
+    left: 20px;
+    display: flex;
+    gap: 25px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    background: rgba(0,0,0,0.5);
+    padding: 6px 14px;
+    border-radius: 8px;
+    z-index: 3;
+  }
+  #lives {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    background: rgba(0,0,0,0.5);
+    padding: 6px 14px;
+    border-radius: 8px;
+    z-index: 3;
+  }
+
+  #player {
+    position: absolute;
+    font-size: 50px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .falling {
+    position: absolute;
+    font-size: 32px;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    z-index: 1;
+  }
+
+  /* Estrellas de fondo */
+  .star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.8;
+    animation: twinkle 2s infinite alternate;
+    z-index: 0;
+  }
+  @keyframes twinkle {
+    from { opacity: 0.3; }
+    to { opacity: 1; }
+  }
+
+  /* Mensajes */
+  #levelUpMsg, #gameOver {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    font-weight: bold;
+    text-shadow: 0 0 10px #fff;
+    display: none;
+    z-index: 4;
+    text-align: center;
+  }
+  #levelUpMsg { color: #ffeb3b; }
+  #gameOver { color: #ff5252; }
+
+  #restartBtn, #exitBtn {
+    margin-top: 1rem;
+    padding: 10px 20px;
+    font-size: 1rem;
+    background: #00acc1;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  #restartBtn:hover, #exitBtn:hover { background: #00838f; }
+
+  /* Pantalla de inicio */
+  #startScreen {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 5;
+  }
+  #startContent {
+    background: #263238;
+    padding: 2rem;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 500px;
+    box-shadow: 0 0 20px rgba(0,255,255,0.5);
+  }
+  #startContent h2 { color: #80deea; margin-bottom: 1rem; }
+  #startContent p { margin: 0.5rem 0; line-height: 1.5; }
+  #startBtn {
+    margin-top: 1.5rem;
+    padding: 12px 24px;
+    font-size: 1.1rem;
+    background: #00acc1;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  #startBtn:hover { background: #00838f; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🌌 Atrapa las Estrellas 🌟</h1>
+  <p>Evita la contaminación lumínica y ayuda al cielo a brillar</p>
+</header>
+
+<!-- HUD -->
+<div id="hud">
+  <div id="score">⭐ Puntos: 0</div>
+  <div id="level">Nivel actual: 1</div>
+</div>
+<div id="lives">❤️❤️❤️</div>
+
+<div id="player">🔭</div>
+<div id="levelUpMsg">¡Nivel Superado! 🚀</div>
+<div id="gameOver">
+  <p>💀 Game Over 💀</p>
+  <p>El cielo se perdió por la contaminación lumínica...</p>
+  <button id="restartBtn" onclick="restartGame()">🔄 Reiniciar</button>
+  <button id="exitBtn" onclick="goToPage()">volver atrás</button>
+</div>
+
+<!-- Pantalla de inicio -->
+<div id="startScreen">
+  <div id="startContent">
+    <p>🎮 <b>Indicaciones del juego:</b></p>
+    <p>🔭 Mueve el telescopio</p>
+    <p>⭐ Atrapa estrellas para ganar el mayor de puntos posibles.</p>
+    <p>💡 Si tocas un foco → pierdes una vida.</p>
+    <p>❤️ Pierdes todas tus vidas → Game Over.</p>
+    <p>🚀 Cada 10 puntos subes de nivel y aumenta la dificultad.</p>
+    <button id="startBtn">🚀 Comenzar Juego</button>
+  </div>
+</div>
+
+<script>
+  const player = document.getElementById("player");
+  const scoreDiv = document.getElementById("score");
+  const levelDiv = document.getElementById("level");
+  const livesDiv = document.getElementById("lives");
+  const levelUpMsg = document.getElementById("levelUpMsg");
+  const gameOverDiv = document.getElementById("gameOver");
+  const startScreen = document.getElementById("startScreen");
+
+  let score, level, lives, fallSpeed, spawnRate, gameActive;
+  let objects = [];
+  let lastSpawn = 0;
+
+  // Fondo estrellado
+  for (let i = 0; i < 80; i++) {
+    let star = document.createElement("div");
+    star.classList.add("star");
+    star.style.width = star.style.height = Math.random() * 3 + "px";
+    star.style.left = Math.random() * window.innerWidth + "px";
+    star.style.top = Math.random() * window.innerHeight + "px";
+    star.style.animationDuration = (Math.random() * 3 + 2) + "s";
+    document.body.appendChild(star);
+  }
+
+  // Mover jugador
+  document.addEventListener("mousemove", e => {
+    if (!gameActive) return;
+    player.style.left = (e.clientX - 25) + "px";
+    player.style.top = (e.clientY - 25) + "px";
+  });
+
+  function spawnObject() {
+    const el = document.createElement("div");
+    el.classList.add("falling");
+    el.innerText = Math.random() < 0.7 ? "⭐" : "💡";
+    el.style.left = Math.random() * (window.innerWidth - 40) + "px";
+    el.style.top = "70px";
+    document.body.appendChild(el);
+    objects.push({ el, y: 70 });
+  }
+
+  function updateObjects(delta) {
+    objects.forEach((obj, i) => {
+      obj.y += fallSpeed * delta * 0.05;
+      obj.el.style.top = obj.y + "px";
+
+      const rect = obj.el.getBoundingClientRect();
+      const playerRect = player.getBoundingClientRect();
+
+      const dx = (rect.left + rect.width/2) - (playerRect.left + playerRect.width/2);
+      const dy = (rect.top + rect.height/2) - (playerRect.top + playerRect.height/2);
+      const distance = Math.sqrt(dx*dx + dy*dy);
+
+      if (distance < 40) {
+        if (obj.el.innerText === "⭐") {
+          score++;
+          scoreDiv.innerText = "⭐ Puntos: " + score;
+          if (score % 10 === 0) levelUp();
+        } else {
+          lives--;
+          updateLives();
+          if (lives <= 0) endGame();
+        }
+        obj.el.remove();
+        objects.splice(i, 1);
+      } else if (obj.y > window.innerHeight) {
+        obj.el.remove();
+        objects.splice(i, 1);
+      }
+    });
+  }
+
+  function updateLives() {
+    livesDiv.innerText = "❤️".repeat(lives);
+  }
+
+  function levelUp() {
+    level++;
+    fallSpeed += 0.5;
+    spawnRate = Math.max(400, spawnRate - 100);
+    levelDiv.innerText = "Nivel actual: " + level;
+    levelUpMsg.style.display = "block";
+    setTimeout(() => { levelUpMsg.style.display = "none"; }, 2000);
+  }
+
+  function endGame() {
+    gameActive = false;
+    gameOverDiv.style.display = "block";
+  }
+
+  function restartGame() {
+    initGame();
+    gameOverDiv.style.display = "none";
+  }
+
+  function goToPage() {
+    window.location.href = "luminica.html"; 
+    // 👉 Cambia "otra_pagina.html" por la URL que quieras
+  }
+
+  function initGame() {
+    score = 0;
+    level = 1;
+    lives = 3;
+    fallSpeed = 3;
+    spawnRate = 1000;
+    gameActive = true;
+    objects.forEach(o => o.el.remove());
+    objects = [];
+    scoreDiv.innerText = "⭐ Puntos: 0";
+    levelDiv.innerText = "Nivel actual: 1";
+    updateLives();
+    lastSpawn = performance.now();
+  }
+
+  document.getElementById("startBtn").addEventListener("click", () => {
+    startScreen.style.display = "none";
+    initGame();
+  });
+
+  // Loop principal
+  let lastTime = performance.now();
+  function gameLoop(now) {
+    const delta = now - lastTime;
+    lastTime = now;
+
+    if (gameActive) {
+      if (now - lastSpawn > spawnRate) {
+        spawnObject();
+        lastSpawn = now;
+      }
+      updateObjects(delta);
+    }
+
+    requestAnimationFrame(gameLoop);
+  }
+  requestAnimationFrame(gameLoop);
+</script>
+
+</body>
+</html>

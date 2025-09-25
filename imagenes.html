@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Galería de Concientización</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(to right, #e0f7fa, #ffffff);
+      padding: 20px;
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #00796b;
+      font-size: 2.8em;
+      text-shadow: 1.5px 1.5px 3px rgba(0,0,0,0.1);
+      letter-spacing: 2px;
+    }
+
+    h2 {
+      text-align: center;
+      margin: 40px 0 10px;
+      color: #00796b;
+      font-weight: 700;
+      font-size: 1.8em;
+    }
+
+    p.intro {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #555;
+      font-size: 16px;
+      max-width: 650px;
+      line-height: 1.5;
+    }
+
+    .botones {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      outline: none;
+    }
+
+    .btn-compartir {
+      background-color: #00796b;
+      color: white;
+      padding: 14px 30px;
+      font-size: 16px;
+      border-radius: 30px;
+      box-shadow: 0 6px 15px rgba(0,121,107,0.35);
+    }
+
+    .btn-compartir:hover {
+      background-color: #004d40;
+      box-shadow: 0 8px 22px rgba(0,77,64,0.6);
+      transform: scale(1.05);
+    }
+
+    .btn-volver {
+      background-color: white;
+      color: #00796b;
+      padding: 12px 18px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 2px solid #00796b;
+      box-shadow: 0 4px 10px rgba(0, 121, 107, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 110px;
+      transition: 0.3s ease;
+    }
+
+    .btn-volver:hover {
+      background-color: #00796b;
+      color: white;
+      box-shadow: 0 6px 18px rgba(0, 77, 64, 0.6);
+      transform: scale(1.05);
+    }
+
+    .video-container {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto 50px;
+      padding-top: 56.25%;
+      overflow: hidden;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+      background-color: #000;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    .video-container video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      border-radius: 12px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .galeria {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 25px;
+      width: 100%;
+      max-width: 1100px;
+      margin-bottom: 50px;
+    }
+
+    .imagen {
+      background-color: #fff;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.12);
+      transition: transform 0.4s, box-shadow 0.4s ease;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .imagen:hover {
+      transform: translateY(-10px) scale(1.05);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+    }
+
+    .imagen img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-bottom: 2px solid #00796b;
+    }
+
+    .descripcion {
+      padding: 20px;
+      font-size: 15px;
+      background-color: #fafafa;
+      color: #444;
+      flex-grow: 1;
+      line-height: 1.5;
+      font-weight: 600;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2.2em;
+      }
+
+      .descripcion {
+        font-size: 14px;
+      }
+
+      .video-container {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🌿 Galería de Concientización 🌍</h1>
+
+  <div class="botones">
+    <button class="btn-compartir" onclick="alert('Gracias por visitar nuestra galería. ¡Comparte el mensaje! 🌱')">💬 ¡Comparte la conciencia!</button>
+    <button class="btn-volver" onclick="window.history.back()">⬅️ Volver</button>
+  </div>
+
+  <h2>🎥 Un mensaje que transforma conciencias</h2>
+  <p class="intro">Observa cómo nuestras acciones afectan el mundo y descubre cómo puedes hacer la diferencia.</p>
+
+  <div class="galeria">
+    <div class="imagen">
+      <img src="img/img1-5.jpeg" alt="Fuegos artificiales dañinos" />
+      <div class="descripcion">🎇 Aunque deslumbran, los fuegos artificiales contaminan el aire, asustan a los animales y generan desechos tóxicos.</div>
+    </div>
+    <div class="imagen">
+      <img src="img/img 1-7.jpeg" alt="Humo de fuegos artificiales" />
+      <div class="descripcion">🌫️ El humo que producen es espeso y dañino, con partículas que afectan la salud respiratoria.</div>
+    </div>
+    <div class="imagen">
+      <img src="img/img 1-6.jpeg" alt="Humos de colores perjudiciales" />
+      <div class="descripcion">🎨 Los colores vibrantes se logran con químicos tóxicos que quedan suspendidos en el aire.</div>
+    </div>
+    <div class="imagen">
+      <img src="img/img 3-8.jpeg" alt="Sistema respiratorio afectado" />
+      <div class="descripcion">😷 Las personas con problemas respiratorios son las más afectadas por los gases de la pirotecnia.</div>
+    </div>
+    <div class="imagen">
+      <img src="img/img 2-4.jpeg" alt="Sustancias dañinas" />
+      <div class="descripcion">🚬 Algunos de estos humos son más nocivos que el humo de un cigarrillo. ¡Aléjate de ellos!</div>
+    </div>
+    <div class="imagen">
+      <img src="img/img 3-5.jpeg" alt="Paisaje natural" />
+      <div class="descripcion">🌄 La belleza de un paisaje natural inspira paz y conciencia ecológica. Cuidémosla.</div>
+    </div>
+    <div class="imagen">
+      <img src="img/img 2-7.jpeg" alt="Actúa ahora" />
+      <div class="descripcion">💡 Cada acción cuenta. Plantar un árbol o decir no a la pirotecnia hace la diferencia.</div>
+    </div>
+    <div class="imagen">
+      <img src="img/img 2.jpeg" alt="Mundo mejor" />
+      <div class="descripcion">🌍 Un mundo mejor empieza con decisiones conscientes. Sé parte del cambio.</div>
+    </div>
+    <div class="imagen">
+      <img src="img/img 3-1.jpeg" alt="Futuro sostenible" />
+      <div class="descripcion">🤝 Juntos podemos construir un futuro sostenible para todos los seres vivos.</div>
+    </div>
+     <div class="imagen">
+      <img src="img/img 9-1.jpeg" alt="Futuro sostenible" />
+      <div class="descripcion">🤝 Juntos podemos construir un futuro sostenible para todos los seres vivos.</div>
+    </div>
+     <div class="imagen">
+      <img src="img/img 9-2.jpeg" alt="Futuro sostenible" />
+      <div class="descripcion">🤝 Juntos podemos construir un futuro sostenible para todos los seres vivos.</div>
+    </div>
+     <div class="imagen">
+      <img src="img/img 9-3.jpeg" alt="Futuro sostenible" />
+      <div class="descripcion">🤝 Juntos podemos construir un futuro sostenible para todos los seres vivos.</div>
+    </div>
+     <div class="imagen">
+      <img src="img/img 9-4.jpeg" alt="Futuro sostenible" />
+      <div class="descripcion">🤝 Juntos podemos construir un futuro sostenible para todos los seres vivos.</div>
+    </div>
+     <div class="imagen">
+      <img src="img/img 9-5.jpeg" alt="Futuro sostenible" />
+      <div class="descripcion">🤝 Juntos podemos construir un futuro sostenible para todos los seres vivos.</div>
+    </div>
+     <div class="imagen">
+      <img src="img/img 9-6.jpeg" alt="Futuro sostenible" />
+      <div class="descripcion">🤝 Juntos podemos construir un futuro sostenible para todos los seres vivos.</div>
+    </div>
+  </div>
+
+</body>
+</html>

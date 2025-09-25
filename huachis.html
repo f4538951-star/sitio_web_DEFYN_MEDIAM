@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Distrito de Huachis</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Fuentes e íconos -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background-color: #f4f9f4;
+      color: #2e7d32;
+      line-height: 1.6;
+    }
+
+    header {
+      background-color: #81c784;
+      padding: 2rem;
+      text-align: center;
+      color: white;
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      text-transform: uppercase;
+    }
+
+    nav {
+      background: linear-gradient(90deg, #66bb6a, #388e3c);
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 10px 0;
+    }
+
+    nav a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      margin: 6px;
+      text-decoration: none;
+      background-color: rgba(255, 255, 255, 0.1);
+      color: white;
+      font-weight: bold;
+      font-size: 1.05rem;
+      border-radius: 8px;
+      backdrop-filter: blur(6px);
+    }
+
+    nav a:hover {
+      background-color: rgba(255, 255, 255, 0.25);
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 2rem;
+      color: #2e7d32;
+      margin: 2rem 0 1rem 0;
+      font-weight: 700;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem;
+      background-color: white;
+    }
+
+    h3 {
+      color: #2e7d32;
+      margin-bottom: 0.8rem;
+      font-size: 1.3rem;
+      font-weight: 700;
+      border-bottom: 2px solid #c8e6c9;
+      padding-bottom: 0.4rem;
+    }
+
+    p {
+      font-size: 1.05rem;
+      color: #333;
+      text-align: justify;
+      margin-bottom: 1.5rem;
+    }
+
+    .content-flex {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .left-content {
+      flex: 1 1 45%;
+    }
+
+    .img-container {
+      flex: 1 1 50%;
+      text-align: center;
+    }
+
+    .img-container video {
+      width: 100%;
+      max-width: 500px;
+      height: auto;
+    }
+
+    footer {
+      background-color: #66bb6a;
+      color: white;
+      text-align: center;
+      padding: 1rem 0;
+      margin-top: 3rem;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>GREENMIND</h1>
+  </header>
+
+  <h2>🌱 Conciencia Ambiental</h2>
+
+  <nav>
+    <a href="quees.html"><i class="fas fa-leaf"></i> ¿QUÉ ES?</a>
+    <a href="tipos.html"><i class="fas fa-layer-group"></i> TIPOS</a>
+    <a href="actividades.html"><i class="fas fa-hands-helping"></i> ACTIVIDADES</a>
+    <a href="prevencion.html"><i class="fas fa-hand-holding-heart"></i> PREVENCIÓN</a>
+    <a href="imagenes.html"><i class="fas fa-camera"></i> IMÁGENES</a>
+    <a href="buzon.html"><i class="fas fa-envelope-open-text"></i> BUZÓN</a>
+    <a href="huachis.html"><i class="fas fa-cogs"></i> HUACHIS</a>
+  </nav>
+
+  <main>
+    <h2>🏞️ Distrito de Huachis</h2>
+
+    <h3>📜 Historia</h3>
+    <p>
+      El distrito de Huachis fue creado el 2 de abril de 1857, perteneciente a la provincia de Huari, en el departamento de Áncash. 
+      Su historia se entrelaza con las raíces de la cultura andina, destacando por su tradición agrícola y costumbres ancestrales. 
+      A lo largo del tiempo, la comunidad ha mantenido un fuerte vínculo con la tierra, preservando su identidad cultural 
+      mediante festividades, la lengua quechua y técnicas de cultivo tradicionales.
+    </p>
+
+    <h3>🗺️ Geografía</h3>
+    <p>
+      Huachis se encuentra en la sierra norte del Perú, en un terreno montañoso con paisajes diversos: desde ríos y quebradas hasta cultivos en andenes. 
+      El distrito está a una altitud promedio de <strong>3,268 metros sobre el nivel del mar</strong> y goza de un clima templado frío típico de la región andina.
+    </p>
+
+    <div class="content-flex">
+      <div class="left-content">
+        <h3>🌍 Cuidemos el planeta</h3>
+        <p>
+          Todos tenemos la responsabilidad de proteger el medio ambiente. Mantener nuestras comunidades limpias y conservar los recursos naturales 
+          es esencial para nuestra salud y la de las futuras generaciones. El cambio empieza con acciones pequeñas.
+        </p>
+
+        <p>
+          Las calles limpias reflejan orden, bienestar y respeto por el entorno. Además, contribuyen a un aire más puro y una mejor calidad de vida. 
+          Preservemos la naturaleza como herencia valiosa de nuestra cultura.
+        </p>
+      </div>
+
+      <div class="img-container">
+        <video controls>
+          <source src="video/video1.mp4" type="video/mp4">
+          Tu navegador no soporta la reproducción de video.
+        </video>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2025 Conciencia Ambiental - Todos los derechos reservados
+  </footer>
+</body>
+</html>

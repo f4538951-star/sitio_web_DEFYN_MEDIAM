@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Buzón</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Fuentes e íconos -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background-color: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    header {
+      background-color: #81c784;
+      padding: 2rem;
+      text-align: center;
+      color: white;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    nav {
+      background: linear-gradient(90deg, #66bb6a, #388e3c);
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 10px 0;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    nav a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      margin: 6px;
+      text-decoration: none;
+      background-color: rgba(255, 255, 255, 0.15);
+      color: white;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1.05rem;
+      transition: background-color 0.3s ease, transform 0.2s;
+      backdrop-filter: blur(6px);
+    }
+
+    nav a i {
+      font-size: 1.1rem;
+    }
+
+    nav a:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-3px);
+    }
+
+    main {
+      padding: 2rem;
+      max-width: 800px;
+      margin: 2rem auto;
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    h2 {
+      color: #388e3c;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      margin-bottom: 1.5rem;
+      color: #4e684e;
+    }
+
+    .form-container {
+      background-color: #f1f8e9;
+      border: 2px solid #c5e1a5;
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    form label {
+      font-weight: bold;
+      display: block;
+      margin-top: 1rem;
+      color: #2e7d32;
+      text-align: left;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 1rem;
+      margin-top: 0.5rem;
+      border: 1px solid #a5d6a7;
+      border-radius: 8px;
+      font-size: 1rem;
+      background-color: #ffffff;
+      color: #2e7d32;
+    }
+
+    input:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #66bb6a;
+      box-shadow: 0 0 5px rgba(102, 187, 106, 0.5);
+    }
+
+    button {
+      margin-top: 2rem;
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      background-color: #388e3c;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s;
+    }
+
+    button:hover {
+      background-color: #2e7d32;
+      transform: scale(1.05);
+    }
+
+    .donacion {
+      margin-top: 4rem;
+      background-color: #f0fbe3;
+      border-left: 6px solid #81c784;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .donacion h3 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      color: #2e7d32;
+    }
+
+    .donacion p {
+      font-size: 1.1rem;
+      margin-bottom: 1.5rem;
+      color: #4e684e;
+    }
+
+    .donacion button {
+      background-color: #43a047;
+      color: white;
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .donacion button:hover {
+      background-color: #2e7d32;
+      transform: scale(1.05);
+    }
+
+    footer {
+      background-color: #66bb6a;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+      margin-top: 3rem;
+    }
+  </style>
+</head>
+
+<body>
+  <header><h1>GREENMIND</h1></header>
+  <h2 style="text-align: center; margin: 20px 0;">🌱 Conciencia Ambiental</h2>
+
+  <!-- MENÚ CON ICONOS -->
+  <nav>
+    <a href="quees.html"><i class="fas fa-leaf"></i> ¿QUÉ ES?</a>
+    <a href="tipos.html"><i class="fas fa-layer-group"></i> TIPOS</a>
+    <a href="actividades.html"><i class="fas fa-hands-helping"></i> ACTIVIDADES</a>
+    <a href="prevencion.html"><i class="fas fa-hand-holding-heart"></i> PREVENCIÓN</a>
+    <a href="imagenes.html"><i class="fas fa-camera"></i> IMÁGENES</a>
+    <a href="buzon.html"><i class="fas fa-envelope-open-text"></i> BUZÓN</a>
+    <a href="huachis.html"><i class="fas fa-cogs"></i> HUACHIS</a>
+  </nav>
+
+  <main>
+    <h2>📬 Buzón de Sugerencias</h2>
+    <p>Déjanos tus ideas para mejorar el cuidado del planeta. ¡Tu opinión cuenta!</p>
+
+    <div class="form-container">
+      <form onsubmit="return enviarSugerencia()">
+        <label for="nombre">Nombre y Apellido:</label>
+        <input type="text" id="nombre" name="nombre" placeholder="Nombre y Apellido" required>
+
+        <label for="sugerencia">Sugerencia:</label>
+        <textarea id="sugerencia" name="sugerencia" rows="5" placeholder="Escribe aquí tu sugerencia..." required></textarea>
+
+        <button type="submit">Enviar</button>
+      </form>
+    </div>
+
+    <!-- SECCIÓN DE DONACIÓN -->
+    <div class="donacion">
+      <h3>💚 Ayúdanos a hacer la diferencia</h3>
+      <p>
+        En GREENMIND estamos recolectando fondos para adquirir materiales de reciclaje y crear talleres educativos en comunidades vulnerables.
+        Cada donación contribuye a sembrar conciencia, empoderar a niños y jóvenes, y transformar residuos en esperanza.
+      </p>
+      <button onclick="donar()">Donar Ahora</button>
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2025 Conciencia Ambiental - Todos los derechos reservados
+  </footer>
+
+  <script>
+    function enviarSugerencia() {
+      alert("✅ ¡Gracias por tu sugerencia! 🌎");
+      return false;
+    }
+
+    function donar() {
+      // Redirige a una nueva página de donación
+      window.location.href = "donar.html";
+    }
+  </script>
+</body>
+</html>

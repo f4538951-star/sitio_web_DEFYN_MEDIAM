@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Juego de Conciencia Ambiental</title>
+  <style>
+    body {
+      font-family: "Poppins", Arial, sans-serif;
+      background: linear-gradient(135deg, #4facfe, #43e97b);
+      color: #1b5e20;
+      padding: 20px;
+      margin: 0;
+    }
+    h1 {
+      text-align: center;
+      font-size: 3rem;
+      color: #ffffff;
+      text-shadow: 3px 3px 10px rgba(0,0,0,0.4);
+      animation: bounce 2s infinite;
+    }
+    h2 {
+      text-align: center;
+      color: #e8f5e9;
+      margin-bottom: 20px;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    #juego {
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 30px;
+      background: #ffffffee;
+      border-radius: 25px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      animation: fadeIn 1.2s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: scale(0.9);}
+      to {opacity: 1; transform: scale(1);}
+    }
+    .pregunta {
+      margin-bottom: 22px;
+      padding: 18px;
+      border: 3px solid transparent;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #f9fbe7, #f1f8e9);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: transform 0.4s;
+      animation: pop 0.5s ease-in-out;
+    }
+    @keyframes pop {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .pregunta:hover {
+      transform: translateY(-5px);
+    }
+    .pregunta p {
+      font-size: 1.15rem;
+      margin-bottom: 10px;
+    }
+    label {
+      display: block;
+      margin: 6px 0;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 8px;
+      transition: 0.3s;
+    }
+    label:hover {
+      background: #e0f2f1;
+    }
+    input[type="radio"] {
+      margin-right: 8px;
+    }
+    .correcta {
+      border-color: #4caf50 !important;
+      background: #e8f5e9 !important;
+      animation: pulse 0.6s;
+    }
+    .incorrecta {
+      border-color: #f44336 !important;
+      background: #ffebee !important;
+      animation: shake 0.4s;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
+    }
+    button {
+      background: linear-gradient(135deg, #66bb6a, #388e3c);
+      color: white;
+      border: none;
+      padding: 14px 30px;
+      border-radius: 50px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: block;
+      margin: 2rem auto;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+      transition: all 0.3s;
+    }
+    button:hover {
+      background: linear-gradient(135deg, #81c784, #2e7d32);
+      transform: scale(1.08);
+    }
+    #resultado {
+      text-align: center;
+      font-weight: bold;
+      margin-top: 20px;
+      font-size: 1.6rem;
+      color: #2e7d32;
+    }
+    #fraseFinal {
+      text-align: center;
+      margin-top: 25px;
+      font-size: 1.3rem;
+      color: #1b5e20;
+      font-style: italic;
+      background: #c8e6c9;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      animation: popUp 0.8s ease-in-out;
+    }
+    @keyframes popUp {
+      from {transform: scale(0.8); opacity: 0;}
+      to {transform: scale(1); opacity: 1;}
+    }
+  </style>
+</head>
+<body>
+  <h1>🌍 Conciencia Ambiental 🌱</h1>
+  <h2>Responde y pon a prueba tus conocimientos</h2>
+
+  <div id="juego">
+    <h3>📋 Preguntas:</h3>
+    <div id="contenedorPreguntas"></div>
+    <button id="botonAccion" onclick="verificarRespuestas()">Enviar Respuestas</button>
+    <p id="resultado"></p>
+    <div id="fraseFinal"></div>
+  </div>
+
+  <script>
+    let preguntas = [
+      { texto: "¿Qué objeto es más recomendable para ir de compras?", opciones: ["🛍️ Bolsa plástica", "👜 Bolsa de tela"], correcta: 1 },
+      { texto: "¿Qué deberías hacer con una botella de vidrio vacía?", opciones: ["🚮 Tirarla a la basura", "♻️ Reciclarla"], correcta: 1 },
+      { texto: "¿Cuál es la mejor forma de ahorrar agua?", opciones: ["🚰 Cerrar la llave al cepillarte", "💧 Dejar la llave abierta"], correcta: 0 },
+      { texto: "¿Qué acción ayuda más a reducir la contaminación del aire?", opciones: ["🚲 Usar bicicleta/transporte público", "🚗 Usar el auto diario"], correcta: 0 },
+      { texto: "¿Qué energía es renovable?", opciones: ["🪨 Carbón", "☀️ Energía solar"], correcta: 1 },
+      { texto: "¿Qué material tarda más en degradarse?", opciones: ["🍾 Botella de vidrio", "🍌 Cáscara de fruta"], correcta: 0 },
+      { texto: "¿Qué animal está más afectado por el plástico en los océanos?", opciones: ["🐢 Tortugas marinas", "🐱 Gatos"], correcta: 0 },
+      { texto: "¿Qué gas producen en mayor cantidad los autos?", opciones: ["🌫️ CO₂", "🌬️ Oxígeno"], correcta: 0 },
+      { texto: "¿Qué es mejor para el planeta?", opciones: ["🥦 Comer más vegetales", "🥩 Comer más carne"], correcta: 0 },
+      { texto: "¿Qué deberías hacer con el papel usado?", opciones: ["♻️ Reutilizar o reciclar", "🔥 Quemarlo"], correcta: 0 }
+    ];
+
+    // 👉 Evitar repeticiones (elegimos todas pero en orden aleatorio)
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function mostrarPreguntas() {
+      const contenedor = document.getElementById("contenedorPreguntas");
+      contenedor.innerHTML = "";
+      preguntas.forEach((pregunta, i) => {
+        let div = document.createElement("div");
+        div.className = "pregunta";
+        div.innerHTML = `<p><b>${i + 1}.</b> ${pregunta.texto}</p>
+          <label><input type="radio" name="p${i}" value="0"> ${pregunta.opciones[0]}</label>
+          <label><input type="radio" name="p${i}" value="1"> ${pregunta.opciones[1]}</label>`;
+        contenedor.appendChild(div);
+      });
+    }
+
+    function verificarRespuestas() {
+      let puntos = 0;
+      preguntas.forEach((pregunta, i) => {
+        let respuesta = document.querySelector(`input[name="p${i}"]:checked`);
+        let divPregunta = document.getElementsByClassName("pregunta")[i];
+
+        if (respuesta) {
+          if (parseInt(respuesta.value) === pregunta.correcta) {
+            puntos++;
+            divPregunta.classList.add("correcta");
+          } else {
+            divPregunta.classList.add("incorrecta");
+            divPregunta.innerHTML += `<p style="color:#c62828"><b>✔ Respuesta correcta:</b> ${pregunta.opciones[pregunta.correcta]}</p>`;
+          }
+        } else {
+          divPregunta.classList.add("incorrecta");
+          divPregunta.innerHTML += `<p style="color:#c62828"><b>✔ Respuesta correcta:</b> ${pregunta.opciones[pregunta.correcta]}</p>`;
+        }
+      });
+
+      document.getElementById("resultado").innerText = `🏆 Tu puntaje final es: ${puntos} / ${preguntas.length}`;
+      document.getElementById("botonAccion").style.display = "none";
+
+      let frase = "";
+      if (puntos === preguntas.length) {
+        frase = "🌍✨ ¡Perfecto! Eres un héroe del planeta.";
+      } else if (puntos >= 7) {
+        frase = "💚 ¡Muy bien! Gran conciencia ambiental.";
+      } else if (puntos >= 4) {
+        frase = "🌱 Vas por buen camino, sigue cuidando la Tierra.";
+      } else {
+        frase = "♻️ Cada acción cuenta. Empieza hoy con pequeños cambios.";
+      }
+      document.getElementById("fraseFinal").innerText = frase;
+    }
+
+    shuffle(preguntas);
+    mostrarPreguntas();
+  </script>
+</body>
+</html>
+
+
+
+
+

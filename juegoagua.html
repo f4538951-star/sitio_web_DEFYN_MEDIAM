@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>🌊 Limpia el Río - Pantalla Completa</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: 'Segoe UI', sans-serif;
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(to bottom, #4fc3f7, #e1f5fe);
+    }
+
+    #juego {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+      z-index: 1;
+    }
+
+    .ui {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #01579b;
+      z-index: 10;
+      background: rgba(255,255,255,0.7);
+      padding: 10px 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    #mensajeEducativo, #gameOver, #instrucciones {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 255, 255, 0.95);
+      padding: 20px 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      display: none;
+      max-width: 80%;
+      text-align: center;
+      z-index: 20;
+    }
+
+    #gameOver h2 {
+      color: red;
+      margin-bottom: 1rem;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background: #0288d1;
+      color: white;
+      transition: 0.3s;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background: #01579b;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="ui">
+    <span id="score">Puntaje: 0</span> | 
+    <span id="nivel">Nivel: 1</span> | 
+    <span id="vidas">Vidas: 3</span>
+  </div>
+
+  <canvas id="juego"></canvas>
+
+<div id="mensajeEducativo"></div>
+
+<div id="gameOver">
+  <h2>💀 Fin del juego</h2>
+  <p id="finalScore"></p>
+  <p>💧 Recuerda: Cuidar el agua es responsabilidad de todos.</p>
+  <button onclick="restartGame()">🔄 Reiniciar</button>
+  
+  <!-- Botón para volver atrás -->
+  <button id="exitBtn" onclick="goToPage()">⬅ Volver atrás</button>
+</div>
+
+<script>
+  function goToPage() {
+    // Opción 1: regresar a la página anterior
+    window.history.back();
+
+    // Opción 2: ir a una página específica (descomenta y cambia la ruta)
+    // window.location.href = "menu.html";
+  }
+</script>
+
+
+  <!-- Instrucciones iniciales -->
+  <div id="instrucciones">
+    <h2>📜 Instrucciones</h2>
+    <p>🚤 Mueve el bote rojo con el ratón para atrapar la basura que cae.</p>
+    <p>🐟 Evita atrapar a los peces, ya que perderás vidas.</p>
+    <p>🎯 Gana puntos recogiendo basura y sube de nivel al llegar a 10 puntos.</p>
+    <p>❤️ Tienes 3 vidas. ¡Úsalas con cuidado!</p>
+    <button onclick="iniciarJuego()">✅ Comenzar</button>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("juego");
+    const ctx = canvas.getContext("2d");
+    const scoreText = document.getElementById("score");
+    const nivelText = document.getElementById("nivel");
+    const vidasText = document.getElementById("vidas");
+    const gameOverDiv = document.getElementById("gameOver");
+    const finalScore = document.getElementById("finalScore");
+    const mensajeEducativo = document.getElementById("mensajeEducativo");
+    const instrucciones = document.getElementById("instrucciones");
+
+    let jugador, objetos, juegoActivo, animacion, score, nivel, velocidad, vidas, pausado;
+
+    const imagenes = {
+      basura: ["🛢️", "🧴", "🍾", "🛍️"],
+      pez: ["🐟", "🐠", "🐡"]
+    };
+
+    const mensajes = [
+      "💧 El 80% de las aguas residuales se vierten sin tratamiento adecuado.",
+      "🐠 La contaminación del agua afecta a millones de especies acuáticas.",
+      "♻️ Una botella de plástico tarda más de 400 años en degradarse.",
+      "💧 Cada gota cuenta: cuida el agua." ,
+      "🚿🔒🌱 “Cierra el grifo, abre el futuro." ,
+      "👶➡️👨‍👩‍👧 “El agua de hoy es el legado de mañana." ,
+      "🏭💨➡️🌊🛑 “Lo que contaminas hoy, lo pagas mañana." ,
+      "🌍 Cuidar el agua es cuidar nuestra vida y la del planeta."
+    ];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    function resetJuego() {
+      // bote con forma (más grande y claro)
+      jugador = { x: canvas.width/2 - 40, y: canvas.height - 120, w: 80, h: 60 };
+      objetos = [];
+      juegoActivo = false;
+      pausado = false;
+      score = 0;
+      nivel = 1;
+      velocidad = 2;
+      vidas = 3;
+      actualizarUI();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      gameOverDiv.style.display = "none";
+      mensajeEducativo.style.display = "none";
+    }
+
+    function actualizarUI() {
+      scoreText.textContent = "Puntaje: " + score;
+      nivelText.textContent = "Nivel: " + nivel;
+      vidasText.textContent = "Vidas: " + vidas;
+    }
+
+    function generarObjeto() {
+      let tipo = Math.random() < 0.7 ? "basura" : "pez";
+      let icono = tipo === "basura"
+        ? imagenes.basura[Math.floor(Math.random() * imagenes.basura.length)]
+        : imagenes.pez[Math.floor(Math.random() * imagenes.pez.length)];
+      objetos.push({
+        x: Math.random() * (canvas.width - 40),
+        y: 0,
+        w: 40,
+        h: 40,
+        tipo: tipo,
+        icono: icono,
+        dy: velocidad
+      });
+    }
+
+    function dibujarBote(x, y, w, h) {
+      ctx.save();
+      ctx.translate(x, y);
+
+      // casco del bote
+      ctx.beginPath();
+      ctx.moveTo(0, h/2);
+      ctx.lineTo(w, h/2);
+      ctx.lineTo(w*0.8, h);
+      ctx.lineTo(w*0.2, h);
+      ctx.closePath();
+      ctx.fillStyle = "red";
+      ctx.fill();
+      ctx.strokeStyle = "black";
+      ctx.stroke();
+
+      // cubierta
+      ctx.beginPath();
+      ctx.rect(w*0.25, 0, w*0.5, h/2);
+      ctx.fillStyle = "#fff3e0";
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function dibujarJuego() {
+      if (!juegoActivo || pausado) return;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Dibujar jugador como bote
+      dibujarBote(jugador.x, jugador.y, jugador.w, jugador.h);
+
+      // Dibujar objetos
+      objetos.forEach((obj, i) => {
+        ctx.font = "35px Segoe UI";
+        ctx.fillStyle = "black";
+        ctx.fillText(obj.icono, obj.x, obj.y + 30);
+        obj.y += obj.dy;
+
+        if (
+          jugador.x < obj.x + obj.w &&
+          jugador.x + jugador.w > obj.x &&
+          jugador.y < obj.y + obj.h &&
+          jugador.y + jugador.h > obj.y
+        ) {
+          if (obj.tipo === "basura") {
+            score++;
+            if (score % 10 === 0) {
+              nivel++;
+              velocidad += 0.5;
+              mostrarMensajeEducativo();
+            }
+          } else {
+            vidas--;
+            if (vidas <= 0) terminarJuego();
+          }
+          objetos.splice(i, 1);
+          actualizarUI();
+        }
+
+        if (obj.y > canvas.height) objetos.splice(i, 1);
+      });
+
+      if (Math.random() < 0.03) generarObjeto();
+
+      animacion = requestAnimationFrame(dibujarJuego);
+    }
+
+    function mostrarMensajeEducativo() {
+      pausado = true;
+      const mensaje = mensajes[(nivel - 1) % mensajes.length];
+      mensajeEducativo.textContent = mensaje;
+      mensajeEducativo.style.display = "block";
+
+      setTimeout(() => {
+        mensajeEducativo.style.display = "none";
+        pausado = false;
+        dibujarJuego();
+      }, 3000);
+    }
+
+    function terminarJuego() {
+      juegoActivo = false;
+      finalScore.textContent = "Puntaje final: " + score;
+      gameOverDiv.style.display = "block";
+      cancelAnimationFrame(animacion);
+    }
+
+    canvas.addEventListener("mousemove", (e) => {
+      if (!juegoActivo) return;
+      jugador.x = e.clientX - jugador.w / 2;
+      jugador.y = e.clientY - jugador.h / 2;
+    });
+
+    function restartGame() {
+      resetJuego();
+      iniciarJuego();
+    }
+
+    // Mostrar instrucciones al cargar
+    instrucciones.style.display = "block";
+
+    function iniciarJuego() {
+      instrucciones.style.display = "none";
+      juegoActivo = true;
+      dibujarJuego();
+    }
+
+    resetJuego();
+  </script>
+</body>
+</html>

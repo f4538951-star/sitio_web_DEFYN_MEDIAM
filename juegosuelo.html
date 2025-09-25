@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Juego: Rescate del Suelo</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom, #a5d6a7, #e8f5e9);
+      text-align: center;
+      color: #2e7d32;
+    }
+    header {
+      background: #388e3c;
+      color: white;
+      padding: 1rem;
+      font-size: 1.5rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    canvas {
+      background: #f1f8e9;
+      border: 3px solid #2e7d32;
+      border-radius: 12px;
+      display: block;
+      margin: 1rem auto;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 6px;
+      margin: 0.5rem;
+      cursor: pointer;
+      background: #43a047;
+      color: white;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #2e7d32;
+      transform: scale(1.05);
+    }
+    #regresarBtn {
+      background: #e53935;
+      display: none;
+    }
+    #regresarBtn:hover {
+      background: #b71c1c;
+    }
+    .info {
+      font-weight: bold;
+      font-size: 1.2rem;
+      margin: 0.5rem;
+    }
+
+    /* Estilo para las instrucciones */
+    #instrucciones {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #instrucciones .contenido {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      max-width: 400px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      color: #2e7d32;
+    }
+    #instrucciones h2 {
+      margin-bottom: 10px;
+    }
+    #instrucciones p {
+      font-size: 1rem;
+      margin: 8px 0;
+    }
+    #instrucciones button {
+      margin-top: 15px;
+      background: #43a047;
+    }
+  </style>
+</head>
+<body>
+  <header>🌱 Rescate del Suelo – ¡Recoge y cuida el planeta!</header>
+
+  <div class="info">
+    <span id="score">Puntaje: 0</span> | 
+    <span id="nivel">Nivel: 1</span> | 
+    <span id="vidas">Vidas: 3</span>
+  </div>
+
+  <canvas id="juego" width="500" height="400"></canvas>
+  <button id="juegoBtn">Iniciar Juego</button>
+  <button id="regresarBtn" onclick="window.location.href='suelo.html'">Regresar</button>
+
+  <!-- Instrucciones -->
+  <div id="instrucciones">
+    <div class="contenido">
+      <h2>📖 Instrucciones</h2>
+      <p>🚛 Usa las teclas ⬅️ ➡️ para mover el carrito.</p>
+      <p>♻️ Atrapa los objetos reciclables para ganar puntos.</p>
+      <p>☠️ Evita los objetos peligrosos, o perderás una vida.</p>
+      <p>✨ Cada 10 puntos subes de nivel y aumenta la velocidad.</p>
+      <p>💀 Si pierdes todas las vidas, termina el juego.</p>
+      <button onclick="cerrarInstrucciones()">¡Entendido!</button>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("juego");
+    const ctx = canvas.getContext("2d");
+    const juegoBtn = document.getElementById("juegoBtn");
+    const regresarBtn = document.getElementById("regresarBtn");
+    const scoreText = document.getElementById("score");
+    const nivelText = document.getElementById("nivel");
+    const vidasText = document.getElementById("vidas");
+    const instrucciones = document.getElementById("instrucciones");
+
+    let jugador, objetos, juegoActivo, animacion, score, nivel, velocidad, vidas;
+
+    function resetJuego() {
+      jugador = { x: 220, y: 350, w: 60, h: 30 };
+      objetos = [];
+      juegoActivo = true;
+      score = 0;
+      nivel = 1;
+      velocidad = 2;
+      vidas = 3;
+      regresarBtn.style.display = "none";
+      actualizarUI();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function actualizarUI() {
+      scoreText.textContent = "Puntaje: " + score;
+      nivelText.textContent = "Nivel: " + nivel;
+      vidasText.textContent = "Vidas: " + vidas;
+    }
+
+    function dibujarJugador() {
+      ctx.fillStyle = "#6d4c41"; 
+      ctx.fillRect(jugador.x, jugador.y, jugador.w, jugador.h);
+      ctx.fillStyle = "#ffeb3b";
+      ctx.fillRect(jugador.x + 10, jugador.y - 10, 40, 10); 
+      ctx.fillStyle = "black";
+      ctx.beginPath();
+      ctx.arc(jugador.x + 10, jugador.y + 30, 10, 0, Math.PI * 2); 
+      ctx.arc(jugador.x + 50, jugador.y + 30, 10, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function dibujarJuego() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      dibujarJugador();
+
+      if (Math.random() < 0.04) {
+        let bueno = Math.random() < 0.7;
+        objetos.push({
+          x: Math.random() * 460,
+          y: 0,
+          w: 30,
+          h: 30,
+          tipo: bueno ? "reciclable" : "peligroso"
+        });
+      }
+
+      objetos.forEach((obj, i) => {
+        obj.y += velocidad;
+
+        if (obj.tipo === "reciclable") {
+          ctx.fillStyle = "#66bb6a";
+          ctx.beginPath();
+          ctx.arc(obj.x, obj.y, 15, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = "white";
+          ctx.fillText("♻️", obj.x - 10, obj.y + 5);
+        } else {
+          ctx.fillStyle = "#ef5350";
+          ctx.beginPath();
+          ctx.arc(obj.x, obj.y, 15, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = "black";
+          ctx.fillText("☠️", obj.x - 10, obj.y + 5);
+        }
+
+        // Colisiones
+        if (
+          jugador.x < obj.x + obj.w &&
+          jugador.x + jugador.w > obj.x &&
+          jugador.y < obj.y + obj.h &&
+          jugador.y + jugador.h > obj.y
+        ) {
+          if (obj.tipo === "reciclable") {
+            score++;
+            if (score % 10 === 0) {
+              nivel++;
+              velocidad += 0.5;
+            }
+          } else {
+            vidas--;
+            if (vidas <= 0) {
+              juegoActivo = false;
+              regresarBtn.style.display = "inline-block";
+            }
+          }
+          objetos.splice(i, 1);
+          actualizarUI();
+        }
+
+        if (obj.y > 400) {
+          objetos.splice(i, 1);
+        }
+      });
+
+      if (!juegoActivo) {
+        ctx.fillStyle = "red";
+        ctx.font = "22px Segoe UI";
+        ctx.fillText("💀 Fin del juego", 180, 200);
+        juegoBtn.textContent = "Reiniciar";
+        cancelAnimationFrame(animacion);
+        return;
+      }
+
+      animacion = requestAnimationFrame(dibujarJuego);
+    }
+
+    // Controles
+    document.addEventListener("keydown", (e) => {
+      if (!juegoActivo) return;
+      if (e.key === "ArrowLeft" && jugador.x > 0) jugador.x -= 20;
+      if (e.key === "ArrowRight" && jugador.x < 440) jugador.x += 20;
+    });
+
+    juegoBtn.addEventListener("click", () => {
+      resetJuego();
+      juegoBtn.textContent = "Reiniciar";
+      dibujarJuego();
+    });
+
+    function cerrarInstrucciones() {
+      instrucciones.style.display = "none";
+    }
+
+    resetJuego();
+  </script>
+</body>
+</html>

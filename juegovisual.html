@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>🚁 Limpia la Ciudad - Contaminación Visual</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(to top, #d1c4e9, #bbdefb); /* Colores lilas y celestes */
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #juego {
+      display: block;
+      margin: 0 auto;
+      background: linear-gradient(to bottom, #c5cae9, #e8eaf6);
+      border: 3px solid #4527a0;
+      border-radius: 12px;
+    }
+    .ui {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.2rem;
+      font-weight: bold;
+      background: rgba(255, 255, 255, 0.85);
+      padding: 8px 18px;
+      border-radius: 12px;
+      color: #311b92;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      display: none; /* Oculto hasta que empiece */
+      gap: 20px;
+    }
+    #fraseNivel {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background: #fff9c4;
+      border-radius: 8px;
+      font-size: 1rem;
+      color: #795548;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      text-align: center;
+      min-height: 40px;
+      display: none; /* Oculto hasta que empiece */
+    }
+    #mensajeFinal, #instrucciones {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      text-align: center;
+      max-width: 80%;
+      font-size: 1.2rem;
+    }
+    #mensajeFinal { display: none; }
+    button {
+      margin-top: 12px;
+      padding: 10px 22px;
+      background: #4527a0;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    button:hover {
+      background: #311b92;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <!-- Interfaz -->
+  <div class="ui">
+    <span id="score">Puntos: 0</span>
+    <span id="nivel">Nivel: 1</span>
+    <span id="vidas">Vidas: ❤️❤️❤️</span>
+  </div>
+  <canvas id="juego"></canvas>
+  <div id="fraseNivel">ℹ Evitemos el exceso de anuncios publicitarios 🌆</div>
+
+  <!-- Pantalla de instrucciones -->
+  <div id="instrucciones">
+    <h2>📢 Instrucciones</h2>
+    <p>Mueve el dron 🚁 con las flechas ↑ ↓</p>
+    <p>Evita chocar con los carteles contaminantes (📺, 📢, 💡, 🪧).</p>
+    <p>Cada choque te quita una vida ❤️.</p>
+    <p>¡Obtén puntos y sube de nivel mientras limpias la ciudad!</p>
+    <button onclick="iniciarJuego()">▶ Iniciar Juego</button>
+  </div>
+
+  <!-- Mensaje final -->
+  <div id="mensajeFinal">
+    <h2 id="titulo"></h2>
+    <p id="texto"></p>
+    <button onclick="reiniciar()">🔄 Reiniciar</button>
+    <button onclick="volverInicio()">🏠 Volver al Inicio</button>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("juego");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = 450;
+
+    const scoreText = document.getElementById("score");
+    const nivelText = document.getElementById("nivel");
+    const vidasText = document.getElementById("vidas");
+    const fraseNivel = document.getElementById("fraseNivel");
+    const mensajeFinal = document.getElementById("mensajeFinal");
+    const instrucciones = document.getElementById("instrucciones");
+    const tituloMsg = document.getElementById("titulo");
+    const textoMsg = document.getElementById("texto");
+    const ui = document.querySelector(".ui");
+
+    let dron, carteles, score, velocidad, juegoActivo, nivel, vidas, tiempoUltimoCartel;
+
+    const frases = [
+      "📢 Menos carteles, más armonía en la ciudad.",
+      "💡 La contaminación visual genera estrés.",
+      "🪧 Espacios limpios = ciudades más bonitas.",
+      "👀 Mucha publicidad satura nuestra mente.",
+      "🌍 Reducir la contaminación visual mejora la vida urbana."
+    ];
+
+    function iniciarJuego() {
+      instrucciones.style.display = "none";
+      ui.style.display = "flex";
+      fraseNivel.style.display = "block";
+      reiniciar();
+    }
+
+    function dibujarDron() {
+      // cuerpo azul
+      ctx.fillStyle = "#0d47a1";
+      ctx.fillRect(dron.x, dron.y, dron.w, dron.h);
+
+      // hélices rojas
+      ctx.fillStyle = "#e53935";
+      ctx.fillRect(dron.x - 10, dron.y - 10, 20, 5); // superior
+      ctx.fillRect(dron.x - 10, dron.y + dron.h + 5, 20, 5); // inferior
+      ctx.fillRect(dron.x - 15, dron.y + 10, 5, 20); // izquierda
+      ctx.fillRect(dron.x + dron.w + 10, dron.y + 10, 5, 20); // derecha
+    }
+
+    function generarCartel() {
+      const iconos = ["📢", "🪧", "📺", "💡"];
+      let icono = iconos[Math.floor(Math.random() * iconos.length)];
+      carteles.push({
+        x: canvas.width,
+        y: Math.random() * (canvas.height - 100) + 50,
+        w: 40,
+        h: 40,
+        icono: icono
+      });
+    }
+
+    function dibujarCarteles() {
+      carteles.forEach((c, i) => {
+        ctx.font = "32px Segoe UI";
+        ctx.fillText(c.icono, c.x, c.y + 20);
+        c.x -= velocidad;
+
+        // Detectar colisión con dron
+        if (c.x < dron.x + dron.w && c.x + c.w > dron.x &&
+            c.y < dron.y + dron.h && c.y + c.h > dron.y) {
+          vidas--;
+          actualizarVidas();
+          carteles.splice(i, 1);
+          if (vidas <= 0) finJuego();
+        }
+      });
+    }
+
+    function actualizar() {
+      if (!juegoActivo) return;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Suelo
+      ctx.fillStyle = "#9575cd";
+      ctx.fillRect(0, canvas.height - 50, canvas.width, 50);
+
+      dibujarDron();
+
+      if (Date.now() - tiempoUltimoCartel > 2000) {
+        generarCartel();
+        tiempoUltimoCartel = Date.now();
+      }
+
+      dibujarCarteles();
+
+      score++;
+      scoreText.textContent = "Puntos: " + score;
+
+      if (score % 1200 === 0) {
+        nivel++;
+        velocidad += 0.5;
+        nivelText.textContent = "Nivel: " + nivel;
+        fraseNivel.textContent = frases[(nivel - 1) % frases.length];
+      }
+
+      requestAnimationFrame(actualizar);
+    }
+
+    function actualizarVidas() {
+      vidasText.textContent = "Vidas: " + "❤️".repeat(vidas);
+    }
+
+    function finJuego() {
+      juegoActivo = false;
+      tituloMsg.textContent = "👀 Fin del Juego";
+      textoMsg.textContent = "Puntaje final: " + score +
+        "\nNivel alcanzado: " + nivel +
+        "\n🌆 Recuerda: Evita la saturación visual en tu ciudad.";
+      mensajeFinal.style.display = "block";
+    }
+
+    function reiniciar() {
+      dron = { x: 100, y: 200, w: 40, h: 40 };
+      carteles = [];
+      score = 0;
+      velocidad = 2;
+      nivel = 1;
+      vidas = 3;
+      actualizarVidas();
+      nivelText.textContent = "Nivel: 1";
+      fraseNivel.textContent = "ℹ Evitemos el exceso de anuncios publicitarios 🌆";
+      juegoActivo = true;
+      mensajeFinal.style.display = "none";
+      tiempoUltimoCartel = Date.now();
+      actualizar();
+    }
+
+    function volverInicio() {
+      window.location.href = "visual.html";
+    }
+
+    // Controles
+    window.addEventListener("keydown", (e) => {
+      if (e.code === "ArrowUp" && dron.y > 50) dron.y -= 20;
+      if (e.code === "ArrowDown" && dron.y < canvas.height - 70) dron.y += 20;
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Tipos de Contaminación</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Fuentes e íconos -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background-color: #e7f5e1;
+      color: #2f4f2f;
+    }
+
+    header {
+      background-color: #66bb6a;
+      padding: 2rem;
+      text-align: center;
+      color: white;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      animation: slideDown 1s ease forwards;
+    }
+
+    nav {
+      background: linear-gradient(90deg, #43a047, #2e7d32);
+      display: flex; 
+      justify-content: center; 
+      flex-wrap: wrap;
+      padding: 10px 0; 
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      opacity: 0; 
+      animation: fadeIn 1s ease forwards; 
+      animation-delay: 0.8s;
+    }
+
+    nav a {
+      display: flex; 
+      align-items: center; 
+      gap: 8px;
+      padding: 12px 20px; 
+      margin: 6px;
+      text-decoration: none; 
+      background-color: rgba(255,255,255,0.15);
+      color: white; 
+      border-radius: 8px; 
+      font-weight: bold; 
+      font-size: 1.05rem;
+      transition: background-color 0.3s, transform 0.2s;
+      backdrop-filter: blur(6px);
+      transform: translateY(20px); 
+      opacity: 0;
+      animation: linkFadeSlide 0.5s forwards;
+    }
+
+    nav a:nth-of-type(1) { animation-delay: 1s; }
+    nav a:nth-of-type(2) { animation-delay: 1.2s; }
+    nav a:nth-of-type(3) { animation-delay: 1.4s; }
+    nav a:nth-of-type(4) { animation-delay: 1.6s; }
+    nav a:nth-of-type(5) { animation-delay: 1.8s; }
+    nav a:nth-of-type(6) { animation-delay: 2s; }
+
+    nav a:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-3px);
+    }
+
+    main {
+      padding: 2rem;
+      text-align: center;
+      max-width: 1300px;
+      margin: auto;
+      animation: fadeIn 1.2s ease-in;
+    }
+
+    .titulo-cuadros {
+      color: #2f6b2f;
+      font-size: 2rem;
+      margin-bottom: 30px;
+      border-bottom: 3px solid #a5d6a7;
+      display: inline-block;
+      padding-bottom: 5px;
+    }
+
+    .cuadros-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 30px;
+      margin-top: 20px;
+    }
+
+    .cuadro {
+      background-color: #ffffff;
+      border-radius: 15px;
+      padding: 25px;
+      text-align: center;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+      transition: transform 0.3s, box-shadow 0.3s;
+      text-decoration: none;
+      color: inherit;
+      animation: fadeZoom 0.8s ease forwards;
+      opacity: 0;
+    }
+
+    .cuadro:nth-child(1) { animation-delay: 0.1s; }
+    .cuadro:nth-child(2) { animation-delay: 0.2s; }
+    .cuadro:nth-child(3) { animation-delay: 0.3s; }
+    .cuadro:nth-child(4) { animation-delay: 0.4s; }
+    .cuadro:nth-child(5) { animation-delay: 0.5s; }
+    .cuadro:nth-child(6) { animation-delay: 0.6s; }
+    .cuadro:nth-child(7) { animation-delay: 0.7s; }
+
+    .cuadro:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .cuadro h2 {
+      color: #2f6b2f;
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+    }
+
+    .cuadro img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    .cuadro p {
+      font-size: 1rem;
+      color: #405a3d;
+      margin-bottom: 10px;
+    }
+
+    .lema {
+      font-style: italic;
+      font-size: 0.95rem;
+      color: #5c7557;
+      margin-top: 10px;
+    }
+
+    footer {
+      background-color: #66bb6a;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+      margin-top: 3rem;
+      opacity: 0;
+      animation: fadeIn 1s ease forwards;
+      animation-delay: 4s;
+    }
+
+    /* === ANIMACIONES === */
+    @keyframes slideDown {
+      from { transform: translateY(-50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes fadeZoom {
+      0% { transform: scale(0.9); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes linkFadeSlide {
+      from { opacity:0; transform: translateY(20px);}
+      to { opacity:1; transform: translateY(0);}
+    }
+  </style>
+</head>
+<body>
+  <header><h1>GREENMIND</h1></header>
+<h2 style="text-align: center; margin: 20px 0;">🌱 Conciencia Ambiental</h2>
+  
+
+  <nav>
+    <a href="quees.html"><i class="fas fa-leaf"></i> ¿QUÉ ES?</a>
+    <a href="tipos.html"><i class="fas fa-layer-group"></i> TIPOS</a>
+  <a href="actividades.html"><i class="fas fa-hands-helping"></i> ACTIVIDADES</a>
+    <a href="prevencion.html"><i class="fas fa-hand-holding-heart"></i> PREVENCIÓN</a>
+    <a href="imagenes.html"><i class="fas fa-camera"></i> IMÁGENES</a>
+    <a href="buzon.html"><i class="fas fa-envelope-open-text"></i> BUZÓN</a>
+    <a href="huachis.html"><i class="fas fa-cogs"></i> HUACHIS</a>
+  </nav>
+
+  <main>
+    <h2 class="titulo-cuadros">Tipos de Contaminación</h2>
+
+    <div class="cuadros-container">
+
+      <a href="agua.html" class="cuadro">
+        <h2>Contaminación del Agua</h2>
+        <img src="img/img 3.png" alt="Contaminación del Agua">
+        <p>Ocasionada por residuos industriales, plásticos y químicos vertidos en ríos y océanos.</p>
+        <p class="lema">"Cada gota cuenta, cuídala."</p>
+      </a>
+
+      <a href="suelo.html" class="cuadro">
+        <h2>Contaminación del Suelo</h2>
+        <img src="img/img 4.jpeg" alt="Contaminación del Suelo">
+        <p>Producida por basura, agroquímicos y materiales no biodegradables.</p>
+        <p class="lema">"La tierra no es un basurero."</p>
+      </a>
+
+      <a href="aire.html" class="cuadro">
+        <h2>Contaminación del Aire</h2>
+        <img src="img/img 5-4.jpeg" alt="Contaminación del Aire">
+        <p>Generada por fábricas, vehículos,humos colorantes y la quema de combustibles fósiles.</p>
+        <p class="lema">"Respira limpio, vive mejor."</p>
+      </a>
+
+      <a href="acustica.html" class="cuadro">
+        <h2>Contaminación Acústica</h2>
+        <img src="img/img 1.jpeg" alt="Contaminación Acústica">
+        <p>El ruido excesivo de los carros, fiestas y uso de maquinarias pesadas altera la salud.</p>
+        <p class="lema">"El silencio también es vida."</p>
+      </a>
+
+      <a href="luminica.html" class="cuadro">
+        <h2>Contaminación Lumínica</h2>
+        <img src="img/img1-2.jpeg" alt="Contaminación Lumínica">
+        <p>La luz artificial descontrolada afecta a animales y al ciclo natural.</p>
+        <p class="lema">"La oscuridad también es necesaria."</p>
+      </a>
+
+      <a href="termica.html" class="cuadro">
+        <h2>Contaminación Térmica</h2>
+        <img src="img/img 3-4.jpeg" alt="Contaminación Térmica">
+        <p>El aumento de temperatura en aguas altera ecosistemas acuáticos.</p>
+        <p class="lema">"El planeta también necesita descansar."</p>
+      </a>
+
+      <a href="visual.html" class="cuadro">
+        <h2>Contaminación Visual</h2>
+        <img src="img/img 7.jpeg" alt="Contaminación Visual">
+        <p>Carteles, cables y basura afectan la estética del entorno.</p>
+        <p class="lema">"La belleza está en los detalles."</p>
+      </a>
+
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2025 Conciencia Ambiental - Todos los derechos reservados
+  </footer>
+</body>
+</html>
+

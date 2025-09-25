@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bienvenida</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+      overflow: hidden;
+    }
+
+    /* Contenedor principal con flexbox */
+    body {
+      display: flex;
+      height: 100vh;
+      background-color: #000;
+      padding: 0;
+    }
+
+    /* Fondo con imagen a la izquierda */
+    .fondo {
+      width: 50vw; /* 50% de la pantalla */
+      height: 100vh;
+      background-image: url('img/img5.jpeg'); /* Ruta de tu imagen */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 0.8; /* Menos opaco para mejorar la estética */
+    }
+
+    /* Contenedor para el contenido de la derecha */
+    .contenido {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: white;
+      width: 50vw; /* 50% del ancho */
+      background: rgba(0, 0, 0, 0.7); /* Fondo oscuro y semitransparente */
+      padding: 3rem;
+      box-sizing: border-box;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .contenido h1 {
+      font-size: 3rem;
+      margin-bottom: 1.5rem;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+    }
+
+    .contenido button {
+      padding: 1rem 2rem;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 5px;
+      background-color: #00bcd4;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      text-transform: uppercase;
+    }
+
+    .contenido button:hover {
+      background-color: #0097a7;
+      transform: scale(1.1);
+    }
+
+    .contenido button:focus {
+      outline: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Imagen de fondo a la izquierda -->
+  <div class="fondo"></div>
+
+  <!-- Contenido a la derecha -->
+  <div class="contenido">
+    <h1>Bienvenido a</h1>
+    <h1>GREENMIND</h1>
+    <button onclick="entrar()">Ingresar</button>
+  </div>
+
+  <script>
+    function entrar() {
+      // Redirige a otra página
+      window.location.href = "quees.html";
+    }
+  </script>
+    
+</body>
+</html>
+
+
+
